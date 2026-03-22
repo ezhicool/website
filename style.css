@@ -1,0 +1,1546 @@
+/*
+ * Тихая тропа — style.css
+ *
+ * Содержание (сверху вниз):
+ *  1. Подключение шрифтов (Groplet, Montserrat)
+ *  2. :root — цвета, радиусы, шрифты, ширина макета, тайминги анимаций
+ *  3. @keyframes и .reveal / .is-visible (появление при скролле — классы вешает script.js)
+ *  4. Сброс box-sizing
+ *  5. Базовые стили body, заголовков, картинок, ссылок
+ *  6. Hero — первый экран: фон, контейнер, шапка, меню, бургер, заголовок, кнопка
+ *  7. Секции — общие отступы, заголовки секций, интервал между секциями
+ *  8. О заповеднике — сетка about, текст, круг, статистика, иконки
+ *  9. Экскурсии — сетка и карточки туров
+ * 10. Правила в лесу — полоса с иконками
+ * 11. Ежедневник — сетка карточек, «Все записи», соцсети
+ * 12. Карта и форма «Хочу в гости»
+ * 13. Подвал — три колонки, копирайт
+ * 14. Медиазапросы (адаптив)
+ */
+
+/* --- 1. Шрифты: заголовки (Groplet), текст и полужирный (Montserrat) --- */
+@font-face {
+  font-family: "Groplet";
+  src: url("./font/gropled-bold.otf") format("opentype"),
+    local("Groplet"), local("Groplet Regular");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* Montserrat 400 — основной текст */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./font/Montserrat-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* Montserrat 600 — меню, акценты */
+@font-face {
+  font-family: "Montserrat";
+  src: url("./font/Montserrat-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* --- 2. Переменные: палитра, скругления, шрифты, ширина контента, отступы футера --- */
+:root {
+  --bg-main: #f9f8ec;
+  --accent: #db5228;
+  --text-main: #1f1f1f;
+  --text-light: #f9f8ec;
+  --card-border: #81800d;
+  --radius-lg: 32px;
+  --radius-md: 16px;
+  --font-main: "Montserrat", system-ui, sans-serif;
+  --font-alt-regular: "Montserrat", system-ui, sans-serif;
+  --font-alt-semibold: "Montserrat", system-ui, sans-serif;
+  --font-groplet: "Groplet", "Montserrat", system-ui, sans-serif;
+  --layout-max: 1920px;
+  --footer-pad-left: 120px;
+  --footer-pad-right: 148px;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-reveal: 0.75s;
+  --duration-fast: 0.4s;
+}
+
+/* --- 3. Анимации: keyframes + появление секций/футера при прокрутке (.reveal + .is-visible от JS) --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroKen {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition:
+    opacity var(--duration-reveal) var(--ease-smooth),
+    transform var(--duration-reveal) var(--ease-smooth);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .hero__bg-img {
+    animation: none !important;
+  }
+
+  .hero .header,
+  .hero-main__title,
+  .hero-main__button {
+    animation: none !important;
+  }
+}
+
+/* --- 4. Сброс: размеры с учётом padding/border --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --- 5. Страница по умолчанию: фон, шрифт, типографика заголовков, картинки, ссылки --- */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-main);
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+h1,
+h2 {
+  font-family: var(--font-groplet);
+}
+
+h3,
+.hero-main__button,
+.visit-form__btn {
+  font-family: var(--font-alt-regular);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* --- 6. Hero (первый экран) --- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: min(100vh, 1126px);
+  min-height: min(100vh, 1126px);
+  max-height: 1126px;
+  margin: 0 auto;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Фон hero: слой под контентом */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+
+/* Фоновое фото: лёгкий «дыхание» масштаба (отключено при prefers-reduced-motion) */
+.hero__bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__bg-img {
+    animation: heroKen 26s ease-in-out infinite alternate;
+  }
+
+  .hero .header {
+    animation: fadeIn 0.65s var(--ease-smooth) both;
+  }
+
+  .hero-main__title {
+    animation: fadeInUp 0.85s var(--ease-smooth) 0.12s both;
+  }
+
+  .hero-main__button {
+    animation: fadeInUp 0.85s var(--ease-smooth) 0.28s both;
+  }
+}
+
+/* Внутренний контейнер hero (max-width макета, отступы) */
+.hero__inner {
+  width: 100%;
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 82px 120px 76px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Шапка в hero: логотип и навигация */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  width: 409px;
+  height: 91px;
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .logo:hover {
+    transform: scale(1.02);
+  }
+}
+
+.logo__icon {
+  width: 409px;
+  height: 91px;
+  object-fit: contain;
+  background: transparent;
+}
+
+/* Горизонтальное меню (десктоп) */
+.nav {
+  display: flex;
+  gap: 64px;
+}
+
+.nav__link {
+  position: relative;
+  cursor: pointer;
+  font-family: var(--font-alt-semibold);
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  background: transparent;
+  border: none;
+  padding: 0;
+  appearance: none;
+  transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .nav__link:hover {
+    opacity: 0.92;
+  }
+}
+
+.nav__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: width var(--duration-fast) var(--ease-smooth);
+}
+
+.nav__link:hover::after {
+  width: 100%;
+}
+
+/* Кнопка бургера (показ с max-width: 600px) */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  appearance: none;
+  flex-shrink: 0;
+  transition:
+    background 0.25s var(--ease-smooth),
+    border-color 0.25s var(--ease-smooth),
+    transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .nav-toggle:hover {
+    background: rgba(0, 0, 0, 0.35);
+    border-color: #fff;
+  }
+}
+
+.nav-toggle__bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 1px;
+  transition:
+    transform 0.3s var(--ease-smooth),
+    opacity 0.25s ease;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Заголовок и кнопка CTA внизу hero */
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+.hero-main__title {
+  font-family: var(--font-alt-semibold);
+  font-size: 48px;
+  font-weight: 600;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+}
+
+.hero-main__button {
+  width: 544px;
+  height: 110px;
+  margin-top: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent);
+  border-radius: 32px;
+  border: 4px solid var(--bg-main);
+  cursor: pointer;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  transition:
+    transform var(--duration-fast) var(--ease-smooth),
+    box-shadow var(--duration-fast) var(--ease-smooth),
+    background var(--duration-fast) var(--ease-smooth);
+}
+
+.hero-main__button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  background: #e06233;
+}
+
+.hero-main__button:active {
+  transform: translateY(0);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* --- 7. Секции: контейнеры, заголовки h2, отступ между секциями --- */
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+
+/* Секция «О нас» — на всю ширину макета */
+#about.section {
+  max-width: 1920px;
+}
+
+/* Широкие секции (экскурсии, ежедневник, визит) — max-width как у hero */
+.section--wide {
+  max-width: var(--layout-max);
+}
+
+/* Вертикальный зазор между соседними <section> в потоке body */
+body > section + section {
+  margin-top: 104px;
+}
+
+.section__title {
+  text-align: center;
+  font-size: 48px;
+  margin-bottom: 40px;
+}
+
+/* --- 8. Блок «О заповеднике»: сетка, текст, фото в круге, блоки статистики --- */
+.about {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 422px minmax(200px, 1fr);
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  justify-items: center;
+  column-gap: 40px;
+  row-gap: 40px;
+  margin: 0 auto;
+  max-width: 1820px;
+}
+
+.about__text {
+  font-size: 24px;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.about__top {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px 56px;
+  width: 100%;
+}
+
+.about__top .about__text {
+  text-align: center;
+  max-width: 520px;
+}
+
+.about__text--lead .about__text-em {
+  font-family: var(--font-alt-semibold);
+  font-weight: 600;
+  font-size: 32px;
+  color: var(--accent);
+}
+
+.about__photo-wrap {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: center;
+  align-self: center;
+}
+
+.about__photo-circle {
+  width: 422px;
+  height: 422px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #d9d9d9;
+  transition: box-shadow var(--duration-reveal) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .about__photo-circle:hover {
+    box-shadow: 0 12px 40px rgba(31, 31, 31, 0.15);
+  }
+
+  .about__photo-circle:hover .about__photo-circle-img {
+    transform: scale(1.04);
+  }
+}
+
+.about__photo-circle-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s var(--ease-smooth);
+}
+
+.about__stat-flank--left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.about__stat-flank--right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.about__stat-hectares {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: start;
+}
+
+.about__stat-hectares .stat-block__label {
+  white-space: nowrap;
+  max-width: min(100vw - 80px, 720px);
+}
+
+/* Цифры и подписи в статистике (48 / 3 / 12) + иконки под ними */
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-block__value {
+  font-family: var(--font-groplet);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.stat-block__label {
+  text-align: center;
+  font-family: var(--font-alt-regular);
+  font-size: 24px;
+  line-height: 1.3;
+  margin-bottom: 24px;
+}
+
+.stat-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stat-icons__img {
+  display: block;
+}
+
+.stat-icons__img--couple {
+  width: 224px;
+  height: 75px;
+}
+
+.stat-icons__img--trees {
+  width: 263px;
+  height: 115px;
+}
+
+.stat-icons__img--ways {
+  width: 263px;
+  height: 157px;
+}
+
+/* --- 9. Экскурсии: сетка карточек и содержимое карточки --- */
+/* Три карточки в ряд (на ≤1200px — два столбца, ≤768px — одна колонка) */
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 544px);
+  gap: 24px;
+  justify-content: center;
+}
+
+.tour-card {
+  border-radius: var(--radius-lg);
+  padding: 40px 64px 24px;
+  width: 544px;
+  height: 335px;
+  position: relative;
+  overflow: hidden;
+  text-align: right;
+  box-shadow: 0 8px 32px rgba(31, 31, 31, 0.06);
+  transition:
+    transform var(--duration-reveal) var(--ease-smooth),
+    box-shadow var(--duration-reveal) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .tour-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(31, 31, 31, 0.12);
+  }
+}
+
+.tour-card__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.tour-card__title,
+.tour-card__row {
+  position: relative;
+  z-index: 1;
+}
+
+.tour-card__title {
+  font-size: 32px;
+  margin: 0 0 20px;
+  font-family: var(--font-groplet);
+  text-align: center;
+}
+
+.tour-card__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.tour-card__row:last-of-type {
+  margin-bottom: 0;
+}
+
+.tour-card__row-label {
+  color: var(--text-main);
+  font-family: var(--font-alt-semibold);
+  font-size: 24px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.tour-card__row span:last-child {
+  font-family: var(--font-alt-regular);
+  font-size: 18px;
+  font-weight: 400;
+  text-align: right;
+}
+
+/* «Что будет»: переносы по <wbr> в разметке */
+.tour-card__row--what {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.tour-card__value-wide {
+  font-family: var(--font-alt-regular);
+  font-size: 18px;
+  font-weight: 400;
+  text-align: right;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.35;
+}
+
+/* --- 10. Правила поведения в лесу --- */
+/* Внешняя обёртка полосы с иконками */
+.rules-strip {
+  margin-top: 32px;
+  border-radius: 24px;
+  background: transparent;
+  padding: 32px 40px;
+}
+
+/* Сетка пунктов правил (4 или 5 колонок в зависимости от ширины) */
+.rules-strip__inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px;
+}
+
+@media (min-width: 1025px) {
+  .rules-strip__inner {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.rule-item {
+  text-align: center;
+  font-size: 16px;
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .rule-item:hover {
+    transform: translateY(-4px);
+  }
+
+  .rule-item:hover .rule-item__icon img {
+    transform: scale(1.06);
+  }
+}
+
+.rule-item__icon {
+  width: 104px;
+  height: 104px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rule-item__icon img {
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+/* --- 11. Ежедневник --- */
+/* Четыре карточки, гибкий gap; на узких экранах — 2 или 1 колонка */
+.diary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 32px);
+  width: 100%;
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  justify-items: stretch;
+  align-items: stretch;
+}
+
+.diary-card {
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  justify-self: center;
+  width: min(100%, 402px);
+  max-width: 402px;
+  min-height: 240px;
+  height: auto;
+  aspect-ratio: 402 / 262;
+  padding: clamp(40px, 8vw, 56px) clamp(12px, 2vw, 16px) clamp(12px, 2vw, 16px);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--duration-reveal) var(--ease-smooth),
+    box-shadow var(--duration-reveal) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .diary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(31, 31, 31, 0.18);
+  }
+}
+
+.diary-card__frame2 {
+  position: absolute;
+  width: min(370px, 92%);
+  height: auto;
+  max-height: 90%;
+  aspect-ratio: 370 / 238;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.diary-card__date,
+.diary-card__text,
+.diary-social {
+  position: relative;
+  z-index: 1;
+}
+
+.diary-card:nth-child(1),
+.diary-card:nth-child(3) {
+  background: var(--card-border);
+}
+
+.diary-card:nth-child(2),
+.diary-card:nth-child(4) {
+  background: var(--accent);
+  color: #f1efc1;
+}
+
+.diary-card__date {
+  font-family: var(--font-groplet);
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.diary-card__text {
+  font-family: var(--font-alt-regular);
+  font-size: 18px;
+  line-height: 1.35;
+  text-align: center;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Вариант карточки: только ссылки на соцсети */
+.diary-card.diary-card--all {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 32px 16px 16px;
+}
+
+.diary-card--all .diary-card__date {
+  margin-bottom: 12px;
+}
+
+.diary-card--all .diary-card__text {
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.diary-social--centered {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  font-size: 18px;
+  font-family: var(--font-alt-regular);
+  color: inherit;
+}
+
+.diary-card--all .diary-social__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+
+.social-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.25s var(--ease-smooth), opacity 0.25s ease;
+}
+
+@media (hover: hover) {
+  .diary-social__item:hover .social-icon {
+    transform: scale(1.12);
+    opacity: 0.95;
+  }
+}
+
+/* --- 12. Как добраться: колонка с картой + карточка формы --- */
+.section--visit {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+/* Две колонки: карта слева, фиксированная ширина анкеты справа */
+.visit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 686px) 828px;
+  column-gap: 166px;
+  align-items: start;
+}
+
+/* Заголовок «Как добраться» + блок с iframe */
+.visit-map-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.visit__heading {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-family: var(--font-groplet);
+  font-size: 48px;
+  font-weight: 400;
+}
+
+.visit-map-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 531px;
+  flex: 1;
+  box-shadow: 0 12px 40px rgba(31, 31, 31, 0.08);
+  transition: box-shadow var(--duration-reveal) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .visit-map-wrap:hover {
+    box-shadow: 0 18px 48px rgba(31, 31, 31, 0.12);
+  }
+}
+
+.visit-map__iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 531px;
+  border: 0;
+}
+
+.visit-form-card {
+  box-sizing: border-box;
+  width: 828px;
+  height: 695px;
+  max-width: 100%;
+  padding: 88px 142px 32px;
+  background: #f1efc1;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(129, 128, 13, 0.12);
+  transition: box-shadow var(--duration-reveal) var(--ease-smooth);
+}
+
+@media (hover: hover) {
+  .visit-form-card:hover {
+    box-shadow: 0 20px 56px rgba(129, 128, 13, 0.18);
+  }
+}
+
+.visit-form__title {
+  margin: 0 0 48px;
+  text-align: center;
+  font-family: var(--font-groplet);
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--text-main);
+}
+
+.visit-form__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  min-height: 0;
+}
+
+.visit-form__group:not(:first-child) {
+  margin-top: 16px;
+}
+
+.visit-form__input,
+.visit-form__select {
+  box-sizing: border-box;
+  width: 544px;
+  max-width: 100%;
+  height: 61px;
+  padding: 0 24px;
+  font-family: var(--font-alt-regular);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.2;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--card-border);
+  background: var(--bg-main);
+  transition:
+    border-color 0.25s var(--ease-smooth),
+    box-shadow 0.25s var(--ease-smooth),
+    transform 0.2s ease;
+}
+
+.visit-form__input:focus,
+.visit-form__select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(219, 82, 40, 0.2);
+}
+
+.visit-form__select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.visit-form__btn {
+  margin-top: 80px;
+  width: 544px;
+  max-width: 100%;
+  align-self: center;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--font-alt-regular);
+  color: white;
+  background: var(--accent);
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-smooth),
+    box-shadow var(--duration-fast) var(--ease-smooth),
+    filter 0.25s ease;
+  box-shadow: 0 8px 24px rgba(219, 82, 40, 0.35);
+}
+
+.visit-form__btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(219, 82, 40, 0.45);
+}
+
+.visit-form__btn:active {
+  transform: translateY(0);
+}
+
+/* --- 13. Подвал: сетка из трёх колонок, строка с копирайтом --- */
+.footer {
+  margin-top: 104px;
+  background: #817f0d;
+  color: var(--text-light);
+  padding: 40px 0 32px;
+  box-sizing: border-box;
+}
+
+/* Три колонки внутри ограничения --layout-max */
+.footer__inner {
+  width: 100%;
+  max-width: var(--layout-max);
+  margin: 0 auto;
+  padding: 0 var(--footer-pad-right) 0 var(--footer-pad-left);
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 32px;
+}
+
+/* Логотип слева */
+.footer__logo {
+  display: flex;
+  align-items: flex-start;
+  justify-self: start;
+}
+
+.footer__logo-icon {
+  width: 409px;
+  height: 91px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Центр: иконка last.svg + текст про погоду/ежей */
+.footer__now {
+  justify-self: center;
+  font-size: 18px;
+}
+
+.footer__now-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.footer__now-icon {
+  width: 205px;
+  height: 149px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+.footer__now-text {
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Текст «Сейчас в лесу…» в одну строку на широкой вёрстке */
+@media (min-width: 769px) {
+  .footer__now-text {
+    white-space: nowrap;
+  }
+}
+
+/* Справа: email и соцсети */
+.footer__contacts {
+  font-size: 16px;
+  justify-self: end;
+  text-align: left;
+}
+
+.footer__contacts a {
+  text-decoration: underline;
+  transition: opacity var(--duration-fast) ease, color 0.25s ease;
+}
+
+@media (hover: hover) {
+  .footer__contacts a:hover {
+    opacity: 0.85;
+    color: #fff9c4;
+  }
+}
+
+.footer__social {
+  margin-top: 12px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer__social-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Строка © и год (подставляется script.js) */
+.footer__bottom {
+  max-width: var(--layout-max);
+  margin: 24px auto 0;
+  padding: 0 var(--footer-pad-right) 0 var(--footer-pad-left);
+  font-size: 13px;
+  opacity: 0.8;
+  box-sizing: border-box;
+}
+
+/* --- 14. Адаптив: точки 1400 / 1200 / 1024 / 768 / 480 / 600 --- */
+
+/* ≤1400px: карта и форма — одна колонка, поля формы на ширину карточки */
+@media (max-width: 1400px) {
+  .visit-layout {
+    grid-template-columns: 1fr;
+    row-gap: 40px;
+    column-gap: 0;
+  }
+
+  .visit-form-card {
+    width: 100%;
+    height: auto;
+    min-height: 695px;
+  }
+
+  .visit-form__input,
+  .visit-form__select,
+  .visit-form__btn {
+    width: 100%;
+  }
+}
+
+/* ≤1200px: туры 2×2, ежедневник 2 колонки, типографика карточек туров гибче */
+@media (max-width: 1200px) {
+  .tours-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(16px, 2.2vw, 24px);
+    justify-items: center;
+  }
+
+  .tour-card {
+    width: 100%;
+    max-width: 544px;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 544 / 335;
+    padding: clamp(28px, 4vw, 40px) clamp(18px, 5vw, 64px)
+      clamp(16px, 2.5vw, 28px);
+  }
+
+  .tour-card__frame {
+    object-fit: contain;
+  }
+
+  .tour-card__title {
+    font-size: clamp(22px, 3.2vw, 32px);
+    margin-bottom: clamp(12px, 2vw, 20px);
+  }
+
+  .tour-card__row {
+    font-size: clamp(14px, 1.8vw, 18px);
+    gap: clamp(8px, 1.5vw, 16px);
+    margin-bottom: clamp(10px, 1.8vw, 16px);
+  }
+
+  .tour-card__row-label {
+    font-size: clamp(17px, 2.4vw, 24px);
+  }
+
+  .tour-card__row span:last-child,
+  .tour-card__value-wide {
+    font-size: clamp(14px, 1.8vw, 18px);
+  }
+
+  .diary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(16px, 2.5vw, 28px);
+  }
+
+  .diary-card {
+    width: min(100%, 402px);
+  }
+}
+
+/* ≤1024px: плотнее отступы секций, about в одну колонку, правила 3 колонки */
+@media (max-width: 1024px) {
+  .section {
+    padding: 56px 28px;
+  }
+
+  .section__title {
+    font-size: clamp(32px, 5vw, 48px);
+    margin-bottom: 28px;
+  }
+
+  .hero__inner {
+    padding: 64px 24px 76px;
+  }
+
+  .logo {
+    width: min(409px, 100%);
+    height: auto;
+  }
+
+  .logo__icon {
+    width: 100%;
+    max-width: 409px;
+    height: auto;
+    aspect-ratio: 409 / 91;
+    object-fit: contain;
+  }
+
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(16px, 3vw, 40px);
+  }
+
+  .nav__link {
+    font-size: clamp(18px, 2.5vw, 28px);
+  }
+
+  .about {
+    grid-template-columns: 1fr;
+    text-align: center;
+    align-items: start;
+    row-gap: 32px;
+  }
+
+  .about__top {
+    grid-column: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .about__top .about__text {
+    max-width: 36rem;
+  }
+
+  .about__text--lead .about__text-em {
+    font-size: clamp(26px, 4vw, 32px);
+  }
+
+  .about__stat-flank--left,
+  .about__photo-wrap,
+  .about__stat-flank--right,
+  .about__stat-hectares {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .about__photo-circle {
+    width: min(422px, 88vw);
+    height: min(422px, 88vw);
+  }
+
+  .about__stat-hectares .stat-block__label {
+    white-space: normal;
+    max-width: 100%;
+  }
+
+  .stat-icons__img--couple,
+  .stat-icons__img--trees,
+  .stat-icons__img--ways {
+    max-width: min(100%, 263px);
+    height: auto;
+  }
+
+  .rules-strip__inner {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .visit-map-wrap,
+  .visit-map__iframe {
+    min-height: 400px;
+  }
+
+  .visit__heading {
+    font-size: clamp(32px, 5vw, 48px);
+  }
+}
+
+/* ≤768px: hero и секции уже, меню в колонку, туры/правила/дневник — одна колонка, футер — столбик */
+@media (max-width: 768px) {
+  .hero__inner {
+    gap: 80px;
+    padding: 48px 16px 64px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .nav {
+    gap: 16px;
+  }
+
+  .nav__link {
+    font-size: 17px;
+  }
+
+  .hero-main {
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  .hero-main__title {
+    font-size: clamp(22px, 6vw, 32px);
+  }
+
+  .hero-main__button {
+    width: min(544px, 100%);
+    max-width: 100%;
+    height: auto;
+    min-height: 88px;
+    padding: 16px 20px;
+    font-size: clamp(18px, 4vw, 28px);
+  }
+
+  .section {
+    padding: 40px 16px;
+  }
+
+  .tours-grid,
+  .rules-strip__inner,
+  .diary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tours-grid {
+    gap: clamp(18px, 4vw, 28px);
+  }
+
+  .tour-card {
+    max-width: 100%;
+    aspect-ratio: 544 / 335;
+    padding: clamp(24px, 5vw, 36px) clamp(14px, 4vw, 48px)
+      clamp(14px, 3vw, 24px);
+  }
+
+  .tour-card__title {
+    font-size: clamp(20px, 5.5vw, 28px);
+  }
+
+  .tour-card__row-label {
+    font-size: clamp(16px, 4vw, 22px);
+  }
+
+  .tour-card__row span:last-child,
+  .tour-card__value-wide {
+    font-size: clamp(13px, 3.2vw, 17px);
+  }
+
+  .diary-grid {
+    gap: clamp(20px, 5vw, 32px);
+  }
+
+  .diary-card {
+    width: min(100%, 402px);
+  }
+
+  .footer__logo-icon {
+    width: min(409px, 100%);
+    height: auto;
+  }
+
+  .footer__inner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .footer__contacts {
+    justify-self: center;
+    text-align: center;
+  }
+
+  .footer {
+    padding: 32px 0 24px;
+  }
+
+  .footer__inner,
+  .footer__bottom {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .footer__now-icon {
+    width: min(205px, 100%);
+    height: auto;
+    max-height: 149px;
+  }
+
+  .footer__now-text {
+    white-space: normal;
+    max-width: min(100%, 340px);
+  }
+
+  .stat-block__value {
+    font-size: 48px;
+  }
+
+  .stat-block__label {
+    font-size: clamp(18px, 4vw, 24px);
+  }
+}
+
+/* ≤480px: правила — сетка 2×N */
+@media (max-width: 480px) {
+  .rules-strip__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rule-item {
+    font-size: 14px;
+  }
+}
+
+/* ≤600px: бургер-меню и увеличенные поля формы */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav {
+    display: none;
+    order: 3;
+    flex-direction: column;
+    width: 100%;
+    gap: 4px;
+    padding: 12px 0 4px;
+    margin: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  .nav.nav--open {
+    display: flex;
+  }
+
+  .nav__link {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 14px 12px;
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .nav__link::after {
+    display: none;
+  }
+
+  .visit-form-card {
+    padding: 36px 18px 28px;
+    min-height: auto;
+  }
+
+  .visit-form__title {
+    font-size: clamp(26px, 7vw, 32px);
+    margin-bottom: 28px;
+  }
+
+  .visit-form__input,
+  .visit-form__select {
+    width: 100%;
+    min-height: 54px;
+    height: auto;
+    padding: 16px 20px;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  .visit-form__btn {
+    width: 100%;
+    min-height: 56px;
+    padding: 18px 20px;
+    font-size: 18px;
+    margin-top: 40px;
+  }
+
+  .visit-form__group:not(:first-child) {
+    margin-top: 14px;
+  }
+}
