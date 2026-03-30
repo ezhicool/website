@@ -125,3 +125,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+const SUPABASE_URL = "https://ukiqmcgfhqnkwilafisf.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVraXFtY2dmaHFua3dpbGFmaXNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NDYxMzAsImV4cCI6MjA5MDQyMjEzMH0.QUrxWHJNfd-xSska0Pyh7lRSt77ubQzcbSCw2OrRESY";
+
+const form = document.getElementById("booking-form");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+
+  const data = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    tour: formData.get("tour"),
+    col: Number(formData.get("people")),
+  };
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/form_submissions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      alert("✅ Заявка успешно отправлена!");
+      form.reset();
+    } else {
+      const errorText = await response.text();
+      console.error(errorText);
+      alert("❌ Ошибка при отправке");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("❌ Ошибка соединения");
+  }
+});

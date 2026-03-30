@@ -331,45 +331,52 @@
 
         <div class="visit-form-card" id="visit-form">
           <div class="visit-form__title">Хочу в гости</div>
-          <form class="visit-form__form">
-            <div class="visit-form__group">
-              <input
-                type="text"
-                name="name"
-                class="visit-form__input"
-                placeholder="Имя"
-              />
-            </div>
-            <div class="visit-form__group">
-              <input
-                type="tel"
-                name="phone"
-                class="visit-form__input"
-                placeholder="Телефон"
-              />
-            </div>
-            <div class="visit-form__group">
-              <select name="tour" class="visit-form__select">
-                <option value="" disabled selected>Выбрать экскурсию</option>
-                <option value="Утренняя тропа">Утренняя тропа</option>
-                <option value="Вечерняя тропа">Вечерняя тропа</option>
-                <option value="Семейная">Семейная</option>
-              </select>
-            </div>
-            <div class="visit-form__group">
-              <input
-                type="number"
-                name="people"
-                min="1"
-                max="10"
-                class="visit-form__input"
-                placeholder="Количество людей"
-              />
-            </div>
-            <button type="submit" class="visit-form__btn">
-              Отправить заявку
-            </button>
-          </form>
+          <form class="visit-form__form" id="booking-form">
+  <div class="visit-form__group">
+    <input
+      type="text"
+      name="name"
+      class="visit-form__input"
+      placeholder="ФИО"
+      required
+    />
+  </div>
+
+  <div class="visit-form__group">
+    <input
+      type="email"
+      name="email"
+      class="visit-form__input"
+      placeholder="Email"
+      required
+    />
+  </div>
+
+  <div class="visit-form__group">
+    <select name="tour" class="visit-form__select" required>
+      <option value="" disabled selected>Выбрать экскурсию</option>
+      <option value="Утренняя тропа">Утренняя тропа</option>
+      <option value="Вечерняя тропа">Вечерняя тропа</option>
+      <option value="Семейная">Семейная</option>
+    </select>
+  </div>
+
+  <div class="visit-form__group">
+    <input
+      type="number"
+      name="people"
+      min="1"
+      max="10"
+      class="visit-form__input"
+      placeholder="Количество людей"
+      required
+    />
+  </div>
+
+  <button type="submit" class="visit-form__btn">
+    Отправить заявку
+  </button>
+</form>
         </div>
       </div>
     </section>
